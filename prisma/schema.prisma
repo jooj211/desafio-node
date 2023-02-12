@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
+model order_details {
+  order_id   Int
+  product_id Int
+  orders     orders   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@ignore
+}
+
+model orders {
+  id               Int             @id @default(autoincrement())
+  produtos         String
+  valor_total      Float
+  nome_cliente     String          @db.VarChar(255)
+  cidade_cliente   String          @db.VarChar(255)
+  endereco_cliente String          @db.VarChar(255)
+  telefone_cliente String          @db.VarChar(255)
+  restaurante_id   Int
+  order_details    order_details[] @ignore
+  restaurants      restaurants     @relation(fields: [restaurante_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model products {
+  id             Int             @id @default(autoincrement())
+  nome           String          @db.VarChar(255)
+  descricao      String          @db.VarChar(255)
+  quantidade     Int
+  preco          Float
+  categoria      String          @db.VarChar(255)
+  id_restaurante Int
+  order_details  order_details[] @ignore
+  restaurants    restaurants     @relation(fields: [id_restaurante], references: [id], onDelete: NoAction, onUpdate: NoAction)
+}
+
+model restaurants {
+  id        Int        @id @default(autoincrement())
+  nome      String     @db.VarChar(255)
+  email     String     @db.VarChar(255)
+  senha     String     @db.VarChar(255)
+  categoria String     @db.VarChar(255)
+  cidade    String     @db.VarChar(255)
+  endereco  String     @db.VarChar(255)
+  telefone  String     @db.VarChar(255)
+  orders    orders[]
+  products  products[]
+}
