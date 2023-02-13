@@ -44,19 +44,25 @@ var ProductsController = /** @class */ (function () {
     }
     ProductsController.prototype.createProduct = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, nome, descricao, quantidade, preco, categoria, id_restaurante, product;
+            var _a, nome, descricao, quantidade, preco, categoria, restaurantId, id_restaurante, product;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = req.body, nome = _a.nome, descricao = _a.descricao, quantidade = _a.quantidade, preco = _a.preco, categoria = _a.categoria, id_restaurante = _a.id_restaurante;
+                        _a = req.body, nome = _a.nome, descricao = _a.descricao, quantidade = _a.quantidade, preco = _a.preco, categoria = _a.categoria;
+                        restaurantId = req.params.restaurantId;
+                        id_restaurante = Number(restaurantId);
                         return [4 /*yield*/, prisma.products.create({
                                 data: {
                                     nome: nome,
                                     descricao: descricao,
-                                    quantidade: quantidade,
-                                    preco: preco,
+                                    quantidade: Number(quantidade),
+                                    preco: Number(preco),
                                     categoria: categoria,
-                                    id_restaurante: id_restaurante
+                                    restaurants: {
+                                        connect: {
+                                            id: id_restaurante
+                                        }
+                                    }
                                 }
                             })];
                     case 1:
@@ -68,10 +74,16 @@ var ProductsController = /** @class */ (function () {
     };
     ProductsController.prototype.getProducts = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var products;
+            var restaurantId, products;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4 /*yield*/, prisma.products.findMany({})];
+                    case 0:
+                        restaurantId = req.params.restaurantId;
+                        return [4 /*yield*/, prisma.products.findMany({
+                                where: {
+                                    id_restaurante: Number(restaurantId)
+                                }
+                            })];
                     case 1:
                         products = _a.sent();
                         return [2 /*return*/, res.json(products)];
@@ -81,14 +93,14 @@ var ProductsController = /** @class */ (function () {
     };
     ProductsController.prototype.getProductById = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, product;
+            var productId, product;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        id = req.params.id;
+                        productId = req.params.productId;
                         return [4 /*yield*/, prisma.products.findUnique({
                                 where: {
-                                    id: Number(id)
+                                    id: Number(productId)
                                 }
                             })];
                     case 1:
@@ -100,12 +112,12 @@ var ProductsController = /** @class */ (function () {
     };
     ProductsController.prototype.updateProduct = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, _a, nome, descricao, quantidade, preco, categoria, id_restaurante, product;
+            var id, _a, nome, descricao, quantidade, preco, categoria, product;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         id = req.params.id;
-                        _a = req.body, nome = _a.nome, descricao = _a.descricao, quantidade = _a.quantidade, preco = _a.preco, categoria = _a.categoria, id_restaurante = _a.id_restaurante;
+                        _a = req.body, nome = _a.nome, descricao = _a.descricao, quantidade = _a.quantidade, preco = _a.preco, categoria = _a.categoria;
                         return [4 /*yield*/, prisma.products.update({
                                 where: {
                                     id: Number(id)
@@ -115,8 +127,7 @@ var ProductsController = /** @class */ (function () {
                                     descricao: descricao,
                                     quantidade: quantidade,
                                     preco: preco,
-                                    categoria: categoria,
-                                    id_restaurante: id_restaurante
+                                    categoria: categoria
                                 }
                             })];
                     case 1:

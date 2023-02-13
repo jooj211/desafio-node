@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 
 export class RestaurantsController {
   async createRestaurant(req: Request, res: Response) {
-    const { nome, email, senha, categoria, cidade, endereco, telefone } = req.body;
+    const { nome, email, senha, categoria, cidade, endereco, telefone } : Restaurant = req.body;
   
     try{
-      const restaurant = await prisma.restaurants.create({
+      const restaurant : Restaurant = await prisma.restaurants.create({
         data: {
           nome,
           email,
@@ -17,12 +17,13 @@ export class RestaurantsController {
           categoria,
           cidade,
           endereco,
-          telefone
+          telefone,
         },
       });
   
       return res.json(restaurant);
     } catch (error) {
+      console.error(error);
       return res.status(400).json({ message: 'Error creating restaurant' });
     }
   }

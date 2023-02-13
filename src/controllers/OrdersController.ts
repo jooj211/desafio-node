@@ -6,7 +6,9 @@ const prisma = new PrismaClient();
 
 export class OrdersController {
     async createOrder(req: Request, res: Response) {
-        const { produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, restaurante_id } = req.body;
+        const { produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente } = req.body;
+        const { restaurantId } = req.params;
+        const restaurante_id = Number(restaurantId);
         
         const order = await prisma.orders.create({
             data: {
@@ -23,7 +25,7 @@ export class OrdersController {
         return res.json(order);
     }
 
-    async getOrdersByRestaurant(req: Request, res: Response) {
+    async getOrders(req: Request, res: Response) {
         const { id } = req.params;
         const orders = await prisma.orders.findMany({
             where: {
@@ -47,7 +49,7 @@ export class OrdersController {
 
     async updateOrder(req: Request, res: Response) {
         const { id } = req.params;
-        const { produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, restaurante_id } = req.body;
+        const { produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente } = req.body;
         
         const order = await prisma.orders.update({
             where: {
@@ -59,8 +61,7 @@ export class OrdersController {
             nome_cliente,
             cidade_cliente,
             endereco_cliente,
-            telefone_cliente,
-            restaurante_id,
+            telefone_cliente
             },
         });
         

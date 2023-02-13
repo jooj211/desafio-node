@@ -44,11 +44,13 @@ var OrdersController = /** @class */ (function () {
     }
     OrdersController.prototype.createOrder = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, restaurante_id, order;
+            var _a, produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, restaurantId, restaurante_id, order;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = req.body, produtos = _a.produtos, valor_total = _a.valor_total, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente, restaurante_id = _a.restaurante_id;
+                        _a = req.body, produtos = _a.produtos, valor_total = _a.valor_total, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente;
+                        restaurantId = req.params.restaurantId;
+                        restaurante_id = Number(restaurantId);
                         return [4 /*yield*/, prisma.orders.create({
                                 data: {
                                     produtos: produtos,
@@ -67,7 +69,7 @@ var OrdersController = /** @class */ (function () {
             });
         });
     };
-    OrdersController.prototype.getOrdersByRestaurant = function (req, res) {
+    OrdersController.prototype.getOrders = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
             var id, orders;
             return __generator(this, function (_a) {
@@ -107,12 +109,12 @@ var OrdersController = /** @class */ (function () {
     };
     OrdersController.prototype.updateOrder = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, _a, produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, restaurante_id, order;
+            var id, _a, produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, order;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         id = req.params.id;
-                        _a = req.body, produtos = _a.produtos, valor_total = _a.valor_total, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente, restaurante_id = _a.restaurante_id;
+                        _a = req.body, produtos = _a.produtos, valor_total = _a.valor_total, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente;
                         return [4 /*yield*/, prisma.orders.update({
                                 where: {
                                     id: Number(id)
@@ -123,8 +125,7 @@ var OrdersController = /** @class */ (function () {
                                     nome_cliente: nome_cliente,
                                     cidade_cliente: cidade_cliente,
                                     endereco_cliente: endereco_cliente,
-                                    telefone_cliente: telefone_cliente,
-                                    restaurante_id: restaurante_id
+                                    telefone_cliente: telefone_cliente
                                 }
                             })];
                     case 1:

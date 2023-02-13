@@ -10,6 +10,4 @@ export type Restaurant = {
   cidade: string;
   endereco: string;
   telefone: string;
-  orders: Order[];
-  products: Product[];
 };

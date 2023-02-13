@@ -22,22 +22,23 @@ router.delete('/restaurants/:id', restaurantsController.deleteRestaurant);
 
 /*  -----------------  PRODUCTS  -----------------  */
 
-router.post('/products', productsController.createProduct);
-router.get('/products', productsController.getProducts);
-router.get('/products/:id', productsController.getProductById);
-router.put('/products/:id', productsController.updateProduct);
-router.delete('/products/:id', productsController.deleteProduct);
+router.post('/restaurants/:id/products', productsController.createProduct);
+router.get('/restaurants/:id/products', productsController.getProducts);
+router.get('/restaurants/:id/products/:id', productsController.getProductById);
+router.put('/restaurants/:id/products/:id', productsController.updateProduct);
+router.delete('/restaurants/:id/products/:id', productsController.deleteProduct);
+
 
 /*  -----------------  END PRODUCTS  -----------------  */
 
 
 /*  -----------------  ORDERS  -----------------  */
 
-router.post('/orders', ordersController.createOrder);
-router.get('/orders/:id', ordersController.getOrderById);
-router.get('/orders/restaurant/:id', ordersController.getOrdersByRestaurant);
-router.put('/orders/:id', ordersController.updateOrder);
-router.delete('/orders/:id', ordersController.deleteOrder);
+router.post('/restaurants/:id/orders', ordersController.createOrder);
+router.get('/restaurants/:id/orders', ordersController.getOrders);
+router.get('/restaurants/:id/orders/:id', ordersController.getOrderById);
+router.put('/restaurants/:id/orders/:id', ordersController.updateOrder);
+router.delete('/restaurants/:id/orders/:id', ordersController.deleteOrder);
 
 /*  -----------------  END ORDERS  -----------------  */
 

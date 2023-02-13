@@ -68,6 +68,7 @@ var RestaurantsController = /** @class */ (function () {
                         return [2 /*return*/, res.json(restaurant)];
                     case 3:
                         error_1 = _b.sent();
+                        console.error(error_1);
                         return [2 /*return*/, res.status(400).json({ message: 'Error creating restaurant' })];
                     case 4: return [2 /*return*/];
                 }
