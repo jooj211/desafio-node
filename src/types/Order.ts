@@ -10,6 +10,5 @@ export type Order = {
   endereco_cliente: string;
   telefone_cliente: string;
   restaurante_id: number;
-  order_details: OrderDetails[];
-  restaurants: Restaurant;
+  restaurant: Restaurant;
 };

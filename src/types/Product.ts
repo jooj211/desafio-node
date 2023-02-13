@@ -9,6 +9,5 @@ export type Product = {
   preco: number;
   categoria: string;
   id_restaurante: number;
-  order_details: OrderDetails[];
-  restaurants: Restaurant;
+  restaurant: Restaurant;
 };
