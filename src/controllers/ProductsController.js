@@ -44,19 +44,22 @@ var ProductsController = /** @class */ (function () {
     }
     ProductsController.prototype.createProduct = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, nome, descricao, quantidade, preco, categoria, restaurantId, id_restaurante, product;
+            var _a, nome, descricao, quantidade, preco, categoria, id_restaurante, newProduct, err_1;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
+                        _b.trys.push([0, 2, , 3]);
                         _a = req.body, nome = _a.nome, descricao = _a.descricao, quantidade = _a.quantidade, preco = _a.preco, categoria = _a.categoria;
-                        restaurantId = req.params.restaurantId;
-                        id_restaurante = Number(restaurantId);
+                        id_restaurante = parseInt(req.params.id);
+                        if (isNaN(id_restaurante)) {
+                            return [2 /*return*/, res.status(400).json({ error: "Invalid restaurant id" })];
+                        }
                         return [4 /*yield*/, prisma.products.create({
                                 data: {
                                     nome: nome,
                                     descricao: descricao,
-                                    quantidade: Number(quantidade),
-                                    preco: Number(preco),
+                                    quantidade: parseInt(quantidade, 10),
+                                    preco: parseFloat(preco),
                                     categoria: categoria,
                                     restaurants: {
                                         connect: {
@@ -66,8 +69,13 @@ var ProductsController = /** @class */ (function () {
                                 }
                             })];
                     case 1:
-                        product = _b.sent();
-                        return [2 /*return*/, res.json(product)];
+                        newProduct = _b.sent();
+                        return [2 /*return*/, res.json(newProduct)];
+                    case 2:
+                        err_1 = _b.sent();
+                        console.log(err_1);
+                        return [2 /*return*/, res.status(500).json({ error: "Error creating product" })];
+                    case 3: return [2 /*return*/];
                 }
             });
         });

@@ -7,18 +7,25 @@ const prisma = new PrismaClient();
 export class OrdersController {
     async createOrder(req: Request, res: Response) {
         const { produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente } = req.body;
-        const { restaurantId } = req.params;
-        const restaurante_id = Number(restaurantId);
+        const restaurante_id = parseInt(req.params.id);
+      
+            if (isNaN(restaurante_id)) {
+                return res.status(400).json({ error: "Invalid restaurant id" });
+            }
         
         const order = await prisma.orders.create({
             data: {
-            produtos,
-            valor_total,
-            nome_cliente,
-            cidade_cliente,
-            endereco_cliente,
-            telefone_cliente,
-            restaurante_id,
+                produtos,
+                valor_total,
+                nome_cliente,
+                cidade_cliente,
+                endereco_cliente,
+                telefone_cliente,
+                restaurants: {
+                    connect: {
+                        id: restaurante_id,
+                    },
+                },
             },
         });
         

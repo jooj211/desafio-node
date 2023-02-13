@@ -43,7 +43,7 @@ export class RestaurantsController {
       },
     });
   
-    return res.status(200).json(restaurant);
+    return restaurant;
   }
   
   async updateRestaurant(req: Request, res: Response) {

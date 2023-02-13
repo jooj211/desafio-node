@@ -102,7 +102,7 @@ var RestaurantsController = /** @class */ (function () {
                             })];
                     case 1:
                         restaurant = _a.sent();
-                        return [2 /*return*/, res.status(200).json(restaurant)];
+                        return [2 /*return*/, restaurant];
                 }
             });
         });

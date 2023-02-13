@@ -6,31 +6,37 @@ import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 
 export class ProductsController {
-    async createProduct(req: Request, res: Response) {
-        const { nome, descricao, quantidade, preco, categoria } : Product = req.body;
-        const { restaurantId } = req.params;
-        const id_restaurante = Number(restaurantId);
-        
-
-        const product = await prisma.products.create({
-            data: {
-                nome,
-                descricao,
-                quantidade: Number(quantidade),
-                preco: Number(preco),
-                categoria,
-                restaurants: {
-                    connect: {
-                        id: id_restaurante
-                    }
-                }
+    async createProduct(req : Request, res : Response) {
+        try {
+            const { nome, descricao, quantidade, preco, categoria } = req.body;
+            const id_restaurante = parseInt(req.params.id);
+      
+            if (isNaN(id_restaurante)) {
+                return res.status(400).json({ error: "Invalid restaurant id" });
             }
-          });
-          
-        
-
-        return res.json(product);
+      
+            const newProduct = await prisma.products.create({
+                data: {
+                    nome,
+                    descricao,
+                    quantidade: parseInt(quantidade, 10),
+                    preco: parseFloat(preco),
+                    categoria,
+                    restaurants: {
+                        connect: {
+                            id: id_restaurante,
+                        },
+                    },
+                },
+            });
+      
+        return res.json(newProduct);
+        } catch (err) {
+            console.log(err);
+            return res.status(500).json({ error: "Error creating product" });
+        }
     }
+      
 
     async getProducts(req: Request, res: Response) {
         const { restaurantId } = req.params;
