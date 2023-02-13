@@ -7,26 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model order_details {
+model order_product {
+  id         Int      @id(map: "order_details_pkey") @default(autoincrement())
   order_id   Int
   product_id Int
-  orders     orders   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-
-  @@ignore
+  orders     orders   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_details_order_id_fkey")
+  products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_details_product_id_fkey")
 }
 
 model orders {
   id               Int             @id @default(autoincrement())
-  produtos         String
   valor_total      Float
   nome_cliente     String          @db.VarChar(255)
   cidade_cliente   String          @db.VarChar(255)
   endereco_cliente String          @db.VarChar(255)
   telefone_cliente String          @db.VarChar(255)
   restaurante_id   Int
-  order_details    order_details[] @ignore
+  order_product    order_product[]
   restaurants      restaurants     @relation(fields: [restaurante_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
@@ -38,7 +35,7 @@ model products {
   preco          Float
   categoria      String          @db.VarChar(255)
   id_restaurante Int
-  order_details  order_details[] @ignore
+  order_product  order_product[]
   restaurants    restaurants     @relation(fields: [id_restaurante], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
