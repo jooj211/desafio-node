@@ -17,15 +17,16 @@ export class RestaurantsController {
           categoria,
           cidade,
           endereco,
-          telefone,
+          telefone
         },
       });
-
+  
       return res.json(restaurant);
     } catch (error) {
-      return res.status(400).json(error);
+      return res.status(400).json({ message: 'Error creating restaurant' });
     }
   }
+  
   
   async getRestaurants(req: Request, res: Response) {
     const restaurants = await prisma.restaurants.findMany({});
