@@ -57,7 +57,7 @@ export class ProductsController {
             },
         });
         
-        return res.json(product);
+        return product ? res.json(product) : res.status(404).json({ error: 'Product not found' });
     }
 
     async updateProduct(req: Request, res: Response) {
@@ -82,13 +82,95 @@ export class ProductsController {
 
     async deleteProduct(req: Request, res: Response) {
         const { id } = req.params;
-        
-        await prisma.products.delete({
-            where: {
-            id: Number(id),
-            },
-        });
-        
-        return res.json({ message: 'Product deleted successfully' });
+      
+        try {
+            // Cria um array com todos os pedidos que contém o produto a ser deletado
+            const orders = await prisma.orders.findMany({
+                where: {
+                    order_product: {
+                        some: {
+                            products: {
+                                id: Number(id),
+                            },
+                        },
+                    },
+                },
+            });
+
+
+            // Deleta todos os order_product que contém o produto a ser deletado
+            await prisma.order_product.deleteMany({
+                where: {
+                  products: {
+                    id: Number(id),
+                  },
+                },
+              });
+            
+              // Deleta todos os pedidos que contém o produto a ser deletado
+                await prisma.orders.deleteMany({
+                    where: {
+                        id: {
+                            in: orders.map((order) => order.id),
+                        },
+                    },
+                });
+            
+              // Deleta o produto
+              await prisma.products.delete({
+                where: {
+                  id: Number(id),
+                },
+              });
+      
+          return res.json({ message: 'Product deleted successfully' });
+        } catch (error) {
+          console.log(error);
+          return res.status(400).json({ error: "Error deleting product" });
+        }
+      }
+      
+
+    async deleteAllProducts(req: Request, res: Response) {
+        const { restaurantId } = req.params;
+
+        try{
+            await prisma.products.findMany({
+                where: {
+                    id_restaurante: Number(restaurantId),
+                },
+            });
+
+            await prisma.order_product.deleteMany({
+                where: {
+                    products: {
+                        id_restaurante: Number(restaurantId),
+                    },
+                },
+            });
+
+            await prisma.orders.deleteMany({
+                where: {
+                    order_product: {
+                        some: {
+                            products: {
+                                id_restaurante: Number(restaurantId),
+                            },
+                        },
+                    },
+                },
+            });
+
+            await prisma.products.deleteMany({
+                where: {
+                    id_restaurante: Number(restaurantId),
+                },
+            });
+        } catch (error) {
+            console.log(error);
+            return res.status(400).json({ error: "Error deleting products" });
+        }
+
+        return res.json({ message: 'All products deleted successfully' });
     }
 }

@@ -8,9 +8,9 @@ datasource db {
 }
 
 model order_product {
-  id         Int      @id(map: "order_details_pkey") @default(autoincrement())
   order_id   Int
   product_id Int
+  id         Int      @id(map: "order_details_pkey") @default(autoincrement())
   orders     orders   @relation(fields: [order_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_details_order_id_fkey")
   products   products @relation(fields: [product_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "order_details_product_id_fkey")
 }

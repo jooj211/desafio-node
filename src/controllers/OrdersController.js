@@ -44,26 +44,98 @@ var OrdersController = /** @class */ (function () {
     }
     OrdersController.prototype.createOrder = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var _a, produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, restaurantId, restaurante_id, order;
+            var _a, productIds, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, restaurantId, products, countMap, notEnoughProducts, valor_total, firstId, order;
+            var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
-                        _a = req.body, produtos = _a.produtos, valor_total = _a.valor_total, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente;
-                        restaurantId = req.params.restaurantId;
-                        restaurante_id = Number(restaurantId);
+                        _a = req.body, productIds = _a.productIds, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente;
+                        restaurantId = parseInt(req.params.id);
+                        // Checa se o restaurante existe
+                        if (isNaN(restaurantId)) {
+                            return [2 /*return*/, res.status(400).json({ error: "Invalid restaurant id" })];
+                        }
+                        return [4 /*yield*/, prisma.products.findMany({
+                                where: {
+                                    id: {
+                                        "in": productIds
+                                    }
+                                }
+                            })];
+                    case 1:
+                        products = _b.sent();
+                        countMap = productIds.reduce(function (map, id) {
+                            map[id] = (map[id] || 0) + 1;
+                            return map;
+                        }, {});
+                        notEnoughProducts = products.some(function (product) {
+                            var count = countMap[product.id] || 0;
+                            return product.quantidade < count;
+                        });
+                        // Retorna um erro se não houver produtos suficientes
+                        if (notEnoughProducts) {
+                            return [2 /*return*/, res.status(400).json({ error: "Not enough products available" })];
+                        }
+                        valor_total = products.reduce(function (sum, product) {
+                            var count = countMap[product.id];
+                            var totalPrice = product.preco * count;
+                            sum += totalPrice;
+                            return sum;
+                        }, 0);
+                        firstId = products[0].id_restaurante;
+                        if (!products.every(function (p) { return p.id_restaurante === firstId; })) {
+                            return [2 /*return*/, res.status(400).json({ error: "All products must belong to the same restaurant" })];
+                        }
                         return [4 /*yield*/, prisma.orders.create({
                                 data: {
-                                    produtos: produtos,
                                     valor_total: valor_total,
                                     nome_cliente: nome_cliente,
                                     cidade_cliente: cidade_cliente,
                                     endereco_cliente: endereco_cliente,
                                     telefone_cliente: telefone_cliente,
-                                    restaurante_id: restaurante_id
+                                    restaurants: {
+                                        connect: {
+                                            id: restaurantId
+                                        }
+                                    },
+                                    order_product: {
+                                        create: productIds.map(function (productId) { return ({
+                                            products: {
+                                                connect: {
+                                                    id: productId
+                                                }
+                                            }
+                                        }); })
+                                    }
                                 }
                             })];
-                    case 1:
+                    case 2:
                         order = _b.sent();
+                        // Atualiza a quantidade de produtos
+                        return [4 /*yield*/, Promise.all(products.map(function (product) { return __awaiter(_this, void 0, void 0, function () {
+                                var count, newQuantity;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            count = countMap[product.id] || 0;
+                                            newQuantity = product.quantidade - count;
+                                            return [4 /*yield*/, prisma.products.update({
+                                                    where: {
+                                                        id: product.id
+                                                    },
+                                                    data: {
+                                                        quantidade: newQuantity
+                                                    }
+                                                })];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 3:
+                        // Atualiza a quantidade de produtos
+                        _b.sent();
                         return [2 /*return*/, res.json(order)];
                 }
             });
@@ -109,27 +181,92 @@ var OrdersController = /** @class */ (function () {
     };
     OrdersController.prototype.updateOrder = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id, _a, produtos, valor_total, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, order;
+            var id, _a, productIds, nome_cliente, cidade_cliente, endereco_cliente, telefone_cliente, products, countMap, notEnoughProducts, valor_total, firstId, order;
+            var _this = this;
             return __generator(this, function (_b) {
                 switch (_b.label) {
                     case 0:
                         id = req.params.id;
-                        _a = req.body, produtos = _a.produtos, valor_total = _a.valor_total, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente;
+                        _a = req.body, productIds = _a.productIds, nome_cliente = _a.nome_cliente, cidade_cliente = _a.cidade_cliente, endereco_cliente = _a.endereco_cliente, telefone_cliente = _a.telefone_cliente;
+                        return [4 /*yield*/, prisma.products.findMany({
+                                where: {
+                                    id: {
+                                        "in": productIds
+                                    }
+                                }
+                            })];
+                    case 1:
+                        products = _b.sent();
+                        countMap = productIds.reduce(function (map, id) {
+                            map[id] = (map[id] || 0) + 1;
+                            return map;
+                        }, {});
+                        notEnoughProducts = products.some(function (product) {
+                            var count = countMap[product.id] || 0;
+                            return product.quantidade < count;
+                        });
+                        // Retorna um erro se não houver produtos suficientes
+                        if (notEnoughProducts) {
+                            return [2 /*return*/, res.status(400).json({ error: "Not enough products available" })];
+                        }
+                        valor_total = products.reduce(function (sum, product) {
+                            var count = countMap[product.id];
+                            var totalPrice = product.preco * count;
+                            sum += totalPrice;
+                            return sum;
+                        }, 0);
+                        firstId = products[0].id_restaurante;
+                        if (!products.every(function (p) { return p.id_restaurante === firstId; })) {
+                            return [2 /*return*/, res.status(400).json({ error: "All products must belong to the same restaurant" })];
+                        }
                         return [4 /*yield*/, prisma.orders.update({
                                 where: {
                                     id: Number(id)
                                 },
                                 data: {
-                                    produtos: produtos,
                                     valor_total: valor_total,
                                     nome_cliente: nome_cliente,
                                     cidade_cliente: cidade_cliente,
                                     endereco_cliente: endereco_cliente,
-                                    telefone_cliente: telefone_cliente
+                                    telefone_cliente: telefone_cliente,
+                                    order_product: {
+                                        create: productIds.map(function (productId) { return ({
+                                            products: {
+                                                connect: {
+                                                    id: productId
+                                                }
+                                            }
+                                        }); })
+                                    }
                                 }
                             })];
-                    case 1:
+                    case 2:
                         order = _b.sent();
+                        // Atualiza a quantidade de produtos
+                        return [4 /*yield*/, Promise.all(products.map(function (product) { return __awaiter(_this, void 0, void 0, function () {
+                                var count, newQuantity;
+                                return __generator(this, function (_a) {
+                                    switch (_a.label) {
+                                        case 0:
+                                            count = countMap[product.id] || 0;
+                                            newQuantity = product.quantidade - count;
+                                            return [4 /*yield*/, prisma.products.update({
+                                                    where: {
+                                                        id: product.id
+                                                    },
+                                                    data: {
+                                                        quantidade: newQuantity
+                                                    }
+                                                })];
+                                        case 1:
+                                            _a.sent();
+                                            return [2 /*return*/];
+                                    }
+                                });
+                            }); }))];
+                    case 3:
+                        // Atualiza a quantidade de produtos
+                        _b.sent();
                         return [2 /*return*/, res.json(order)];
                 }
             });
@@ -137,19 +274,75 @@ var OrdersController = /** @class */ (function () {
     };
     OrdersController.prototype.deleteOrder = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id;
+            var id, order, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         id = req.params.id;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, prisma.order_product.deleteMany({
+                                where: {
+                                    orders: {
+                                        id: Number(id)
+                                    }
+                                }
+                            })];
+                    case 2:
+                        _a.sent();
                         return [4 /*yield*/, prisma.orders["delete"]({
                                 where: {
                                     id: Number(id)
                                 }
                             })];
-                    case 1:
-                        _a.sent();
+                    case 3:
+                        order = _a.sent();
+                        if (!order) {
+                            return [2 /*return*/, res.status(400).json({ error: "Order not found" })];
+                        }
                         return [2 /*return*/, res.json({ message: 'Order deleted successfully' })];
+                    case 4:
+                        error_1 = _a.sent();
+                        console.log(error_1);
+                        return [2 /*return*/, res.status(400).json({ error: "Error deleting order" })];
+                    case 5: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    OrdersController.prototype.deleteAllOrders = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var id, orderDetails, error_2;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        id = req.params.id;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 4, , 5]);
+                        return [4 /*yield*/, prisma.order_product.deleteMany({
+                                where: {
+                                    orders: {
+                                        restaurante_id: Number(id)
+                                    }
+                                }
+                            })];
+                    case 2:
+                        orderDetails = _a.sent();
+                        return [4 /*yield*/, prisma.orders.deleteMany({
+                                where: {
+                                    restaurante_id: Number(id)
+                                }
+                            })];
+                    case 3:
+                        _a.sent();
+                        return [2 /*return*/, res.json({ message: 'All orders deleted successfully' })];
+                    case 4:
+                        error_2 = _a.sent();
+                        console.log(error_2);
+                        return [2 /*return*/, res.status(400).json({ error: "Error deleting all orders" })];
+                    case 5: return [2 /*return*/];
                 }
             });
         });

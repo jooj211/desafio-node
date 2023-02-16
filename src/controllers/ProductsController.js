@@ -113,7 +113,7 @@ var ProductsController = /** @class */ (function () {
                             })];
                     case 1:
                         product = _a.sent();
-                        return [2 /*return*/, res.json(product)];
+                        return [2 /*return*/, product ? res.json(product) : res.status(404).json({ error: 'Product not found' })];
                 }
             });
         });
@@ -147,19 +147,83 @@ var ProductsController = /** @class */ (function () {
     };
     ProductsController.prototype.deleteProduct = function (req, res) {
         return __awaiter(this, void 0, void 0, function () {
-            var id;
+            var id, orders, error_1;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
                         id = req.params.id;
+                        _a.label = 1;
+                    case 1:
+                        _a.trys.push([1, 6, , 7]);
+                        return [4 /*yield*/, prisma.orders.findMany({
+                                where: {
+                                    order_product: {
+                                        some: {
+                                            products: {
+                                                id: Number(id)
+                                            }
+                                        }
+                                    }
+                                }
+                            })];
+                    case 2:
+                        orders = _a.sent();
+                        // Deleta todos os order_product que contém o produto a ser deletado
+                        return [4 /*yield*/, prisma.order_product.deleteMany({
+                                where: {
+                                    products: {
+                                        id: Number(id)
+                                    }
+                                }
+                            })];
+                    case 3:
+                        // Deleta todos os order_product que contém o produto a ser deletado
+                        _a.sent();
+                        // Deleta todos os pedidos que contém o produto a ser deletado
+                        return [4 /*yield*/, prisma.orders.deleteMany({
+                                where: {
+                                    id: {
+                                        "in": orders.map(function (order) { return order.id; })
+                                    }
+                                }
+                            })];
+                    case 4:
+                        // Deleta todos os pedidos que contém o produto a ser deletado
+                        _a.sent();
+                        // Deleta o produto
                         return [4 /*yield*/, prisma.products["delete"]({
                                 where: {
                                     id: Number(id)
                                 }
                             })];
-                    case 1:
+                    case 5:
+                        // Deleta o produto
                         _a.sent();
                         return [2 /*return*/, res.json({ message: 'Product deleted successfully' })];
+                    case 6:
+                        error_1 = _a.sent();
+                        console.log(error_1);
+                        return [2 /*return*/, res.status(400).json({ error: "Error deleting product" })];
+                    case 7: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    ProductsController.prototype.deleteAllProducts = function (req, res) {
+        return __awaiter(this, void 0, void 0, function () {
+            var restaurantId;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        restaurantId = req.params.restaurantId;
+                        return [4 /*yield*/, prisma.products.deleteMany({
+                                where: {
+                                    id_restaurante: Number(restaurantId)
+                                }
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [2 /*return*/, res.json({ message: 'All products deleted successfully' })];
                 }
             });
         });

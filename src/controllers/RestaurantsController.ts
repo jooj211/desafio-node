@@ -76,6 +76,26 @@ export class RestaurantsController {
   async deleteRestaurant(req: Request, res: Response) {
     const { id } = req.params;
   
+    await prisma.order_product.deleteMany({
+      where: {
+        products: {
+          id_restaurante: Number(id),
+        },
+      },
+    });
+
+    await prisma.orders.deleteMany({
+      where: {
+        restaurante_id: Number(id),
+      },
+    });
+
+    await prisma.products.deleteMany({
+      where: {
+        id_restaurante: Number(id),
+      },
+    });
+
     await prisma.restaurants.delete({
       where: {
         id: Number(id),
