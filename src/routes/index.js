@@ -16,6 +16,15 @@ exports.router.get('/restaurants/:id', restaurantsController.getRestaurantById);
 exports.router.put('/restaurants/:id', restaurantsController.updateRestaurant);
 exports.router["delete"]('/restaurants/:id', restaurantsController.deleteRestaurant);
 /*  -----------------  END RESTAURANTS  -----------------  */
+/*
+{
+    "nome": "",
+    "descricao": "",
+    "quantidade": ,
+    "preco": ,
+    "categoria": ""
+}
+*/
 /*  -----------------  PRODUCTS  -----------------  */
 exports.router.post('/restaurants/:id/products', productsController.createProduct);
 exports.router.get('/restaurants/:id/products', productsController.getProducts);
@@ -24,6 +33,15 @@ exports.router.put('/restaurants/:id/products/:id', productsController.updatePro
 exports.router["delete"]('/restaurants/:id/products/:id', productsController.deleteProduct);
 exports.router["delete"]('/restaurants/:id/products', productsController.deleteAllProducts);
 /*  -----------------  END PRODUCTS  -----------------  */
+/*
+{
+    "productIds": [],
+    "nome_cliente": "",
+    "cidade_cliente": "",
+    "endereco_cliente": "",
+    "telefone_cliente": ""
+}
+*/
 /*  -----------------  ORDERS  -----------------  */
 exports.router.post('/restaurants/:id/orders', ordersController.createOrder);
 exports.router.get('/restaurants/:id/orders', ordersController.getOrders);

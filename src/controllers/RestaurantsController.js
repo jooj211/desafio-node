@@ -150,12 +150,35 @@ var RestaurantsController = /** @class */ (function () {
                 switch (_a.label) {
                     case 0:
                         id = req.params.id;
+                        return [4 /*yield*/, prisma.order_product.deleteMany({
+                                where: {
+                                    products: {
+                                        id_restaurante: Number(id)
+                                    }
+                                }
+                            })];
+                    case 1:
+                        _a.sent();
+                        return [4 /*yield*/, prisma.orders.deleteMany({
+                                where: {
+                                    restaurante_id: Number(id)
+                                }
+                            })];
+                    case 2:
+                        _a.sent();
+                        return [4 /*yield*/, prisma.products.deleteMany({
+                                where: {
+                                    id_restaurante: Number(id)
+                                }
+                            })];
+                    case 3:
+                        _a.sent();
                         return [4 /*yield*/, prisma.restaurants["delete"]({
                                 where: {
                                     id: Number(id)
                                 }
                             })];
-                    case 1:
+                    case 4:
                         _a.sent();
                         return [2 /*return*/, res.status(200).json({ message: 'Restaurant deleted successfully' })];
                 }
