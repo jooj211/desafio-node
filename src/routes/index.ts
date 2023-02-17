@@ -36,10 +36,10 @@ router.delete('/restaurants/:id', restaurantsController.deleteRestaurant);
 
 router.post('/restaurants/:id/products', productsController.createProduct);
 router.get('/restaurants/:id/products', productsController.getProducts);
+router.delete('/restaurants/:id/products', productsController.deleteAllProducts);
 router.get('/restaurants/:id/products/:id', productsController.getProductById);
 router.put('/restaurants/:id/products/:id', productsController.updateProduct);
 router.delete('/restaurants/:id/products/:id', productsController.deleteProduct);
-router.delete('/restaurants/:id/products', productsController.deleteAllProducts);
 
 
 /*  -----------------  END PRODUCTS  -----------------  */
@@ -59,10 +59,10 @@ router.delete('/restaurants/:id/products', productsController.deleteAllProducts)
 
 router.post('/restaurants/:id/orders', ordersController.createOrder);
 router.get('/restaurants/:id/orders', ordersController.getOrders);
+router.delete('/restaurants/:id/orders', ordersController.deleteAllOrders);
 router.get('/restaurants/:id/orders/:id', ordersController.getOrderById);
 router.put('/restaurants/:id/orders/:id', ordersController.updateOrder);
 router.delete('/restaurants/:id/orders/:id', ordersController.deleteOrder);
-router.delete('/restaurants/:id/orders', ordersController.deleteAllOrders);
 
 /*  -----------------  END ORDERS  -----------------  */
 
@@ -70,10 +70,6 @@ router.delete('/restaurants/:id/orders', ordersController.deleteAllOrders);
 
 /* 
 TODO
-- [ ] Testar create, update, delete e deleteAll de ordens
-- [ ] Testar create, update, delete e deleteAll de produtos
 - [ ] Testar create, update e delete de restaurantes
-- [ ] Testar delete de restaurantes com produtos e ordens associados
-- [ ] Testar delete de produtos com ordens associadas
-- [ ] Testar delete de ordens com produtos associados
+- [ ] Testar deletar restaurantes com pedidos, produtos e order_products relacionados
  */

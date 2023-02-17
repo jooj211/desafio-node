@@ -1,0 +1,350 @@
+openapi: 3.0.0
+info:
+  title: FastMeal API
+  description: API for managing restaurants, products, and orders
+  version: 1.0.0
+servers:
+  - url: http://localhost:3000
+paths:
+  /restaurants:
+    post:
+      summary: Create a new restaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantInput'
+      responses:
+        '201':
+          description: Restaurant created successfully
+        '400':
+          description: Invalid request body
+    get:
+      summary: Get all restaurants
+      responses:
+        '200':
+          description: List of restaurants
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Restaurant'
+  /restaurants/{id}:
+    get:
+      summary: Get a restaurant by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+      responses:
+        '200':
+          description: Restaurant found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Restaurant'
+        '404':
+          description: Restaurant not found
+    put:
+      summary: Update a restaurant by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RestaurantInput'
+      responses:
+        '200':
+          description: Restaurant updated successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Restaurant not found
+    delete:
+      summary: Delete a restaurant by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+      responses:
+        '200':
+          description: Restaurant deleted successfully
+        '404':
+          description: Restaurant not found
+  /restaurants/{id}/products:
+    post:
+      summary: Create a new product for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '201':
+          description: Product created successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Restaurant not found
+    get:
+      summary: Get all products for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+      responses:
+        '200':
+          description: List of products
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Product'
+        '404':
+          description: Restaurant not found
+    delete:
+      summary: Delete all products for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+      responses:
+        '200':
+          description: Products deleted successfully
+        '404':
+          description: Restaurant not found
+  restaurants/{id}/products/{productId}:
+    get:
+      summary: Get a product by ID for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      responses:
+        '200':
+          description: Product found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        '404':
+          description: Restaurant or product not found
+    put:
+      summary: Update a product by ID for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ProductInput'
+      responses:
+        '200':
+          description: Product updated successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Restaurant or product not found
+    delete:
+      summary: Delete a product by ID for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+        - name: productId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the product
+      responses:
+        '200':
+          description: Product deleted successfully
+        '404':
+          description: Restaurant or product not found
+  restaurants/{id}/orders:
+    post:
+      summary: Create a new order for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '201':
+          description: Order created successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Restaurant not found
+      get:
+        summary: Get all orders for a restaurant
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+            description: ID of the restaurant
+        responses:
+          '200':
+            description: List of orders
+            content:
+              application/json:
+                schema:
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/Order'
+          '404':
+            description: Restaurant not found
+      delete:
+        summary: Delete all orders for a restaurant
+        parameters:
+          - name: id
+            in: path
+            required: true
+            schema:
+              type: integer
+            description: ID of the restaurant
+        responses:
+          '200':
+            description: Orders deleted successfully
+          '404':
+            description: Restaurant not found
+  restaurants/{id}/orders/{orderId}:
+    get:
+      summary: Get an order by ID for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the order
+      responses:
+        '200':
+          description: Order found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Order'
+        '404':
+          description: Restaurant or order not found
+    put:
+      summary: Update an order by ID for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the order
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderInput'
+      responses:
+        '200':
+          description: Order updated successfully
+        '400':
+          description: Invalid request body
+        '404':
+          description: Restaurant or order not found
+    delete:
+      summary: Delete an order by ID for a restaurant
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the restaurant
+        - name: orderId
+          in: path
+          required: true
+          schema:
+            type: integer
+          description: ID of the order
+      responses:
+        '200':
+          description: Order deleted successfully
+        '404':
+          description: Restaurant or order not found
+components:
+  
