@@ -72,4 +72,4 @@ router.delete('/restaurants/:id/orders/:id', ordersController.deleteOrder);
 TODO
 - [ ] Testar create, update e delete de restaurantes
 - [ ] Testar deletar restaurantes com pedidos, produtos e order_products relacionados
- */
+*/
